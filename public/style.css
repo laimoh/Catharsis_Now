@@ -1,0 +1,49 @@
+@font-face {
+  font-family: "Messapia";
+  src: url("assets/Messapia-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  background-color: black;
+  overflow: none;
+}
+
+.title {
+  font-family: "Messapia";
+  font-size: 2rem;
+  color: white;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  n
+}
+
+#logo {
+  width: 50vw;
+}
+
+#logo img {
+  width: 100%;
+  height: 100%;
+}
+
+.timeBox {
+  font-family: "Messapia";
+  font-size: 2rem;
+  color: rgb(165, 17, 17);
+}
+
+.keyword {
+  color: rgb(134, 230, 129);
+  font-family: "Messapia";
+  font-size: 1rem;
+}
