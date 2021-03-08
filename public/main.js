@@ -3,7 +3,7 @@ const maxPostsToFetch = 500;
 const maxRequests = maxPostsToFetch / postPerRequest // 5 total requests
 const responses = [] // stores all of em
 let generatedTexts = [];
-
+let keywords;
 const handleStart = () => {
    fetchPosts()
 }
@@ -75,7 +75,7 @@ const textAnalysis = async (texts) => {
    const optionsExtract = {
       method: 'POST',
       headers: {
-         "Authorization": "Token 847b5711a24fb5b22afe3e592775d483cb9f9323",
+         "Authorization": "Token 56189bb139c774de7dd866285c14ddd65a6e00cd",
          "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
@@ -83,11 +83,18 @@ const textAnalysis = async (texts) => {
    console.log('fetching extracted keywords')
    const extract = await fetch('https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/', optionsExtract)
    const extractJSON = await extract.json()
-   
-   // console.log(extractJSON)
-   animateKeywords(extractJSON)
 
+   keywords = extractJSON.map((eachPost) => {
+      let keywordSelect = Math.floor(Math.random() * (eachPost.extractions.length - 1 ))
+      if (eachPost.extractions[keywordSelect]) {
+         return eachPost.extractions[keywordSelect].parsed_value
+      }
+   }, [])
+
+   new p5(sketch);
+   console.log(extractJSON)
 }
+
 
 // function animateKeywords(keywords) {
 //    console.log(keywords)
@@ -144,46 +151,75 @@ let _time = (h > 12) ? (h-12 + ':' + m +' PM') : (h + ':' + m +' AM');
 let time = document.querySelector('.time')
 time.innerHTML = _time
 
-let from = 192;
-let mover, mew;
-let font1, font2;
-let strings = ['storage','trouser', 'native', 'get', 'deteriorate', 'crime', 'wild', 'service', 'mood', 'oh']
-let movers = [];
-let attractor;
+// let from = 192;
+// let mover, mew;
+// let font1, font2;
+// let strings = ['storage','trouser', 'native', 'get', 'deteriorate', 'crime', 'wild', 'service', 'mood', 'oh']
+// let movers = [];
+// let attractor;
 
-function preload() {
-  font1 = loadFont('assets/Messapia-Regular.otf');
-  font2 = loadFont('assets/DotGothic16-Regular.ttf');
-}
+const sketch = p => {
 
-function setup() {
-   let cnv = createCanvas(windowWidth, windowHeight)
-   cnv.position(0, 0)
-   cnv.style('z-index', -1);
+   let movers = [];
+   let attractor;
+   let font1 = p.loadFont('assets/Messapia-Regular.otf');
+   let font2 = p.loadFont('assets/DotGothic16-Regular.ttf');
+ 
+   p.setup = function() {
+      let cnv = p.createCanvas(p.windowWidth, p.windowHeight)
+      cnv.position(0, 0)
+      cnv.style('z-index', -1);
 
-   for (let i = 0; i < 10; i++) {
-      let x = random(width);
-      let y = random(height);
-      let m = random(50, 150);
-      movers[i] = new Mover(x, y, m);
-    }
-    attractor = new Attractor(width / 2, height / 2, 100);
-   
-}
-
-function draw() {
-   
-   background(120) 
+      for (let i = 0; i < keywords.length; i++) {
+         let x = p.random(p.width);
+         let y = p.random(p.height);
+         let m = p.random(50, 150);
+         movers[i] = new Mover(x, y, m, p);
+       }
+       attractor = new Attractor(p.width / 2, p.height / 2, 100, p);
+   };
+ 
+   p.draw = function() {
+     p.background(120) 
 
    for (let i=0; i < movers.length; i++) {
       movers[i].update();
-      movers[i].show(strings[i], font2);
+      movers[i].show(keywords[i], font2);
       attractor.attract(movers[i]);
    }
+   };
+ };
+ 
+
+
+// function setup() {
+//    let cnv = createCanvas(windowWidth, windowHeight)
+//    cnv.position(0, 0)
+//    cnv.style('z-index', -1);
+
+//    for (let i = 0; i < 10; i++) {
+//       let x = random(width);
+//       let y = random(height);
+//       let m = random(50, 150);
+//       movers[i] = new Mover(x, y, m);
+//     }
+//     attractor = new Attractor(width / 2, height / 2, 100);
    
-}
+// // }
+
+// function draw() {
+   
+//    p.background(120) 
+
+//    for (let i=0; i < movers.length; i++) {
+//       movers[i].update();
+//       movers[i].show(strings[i], font2);
+//       attractor.attract(movers[i]);
+//    }
+   
+// }
 
 Noise3k({
-   // container: '#main-container', // (optional || default: document.body) specify where the noise is applied
+   // container: '#defaultCanvas0', // (optional || default: document.body) specify where the noise is applied
    grainSize: 1, // (optional || default: 1) Multiplier for the grain size
  });

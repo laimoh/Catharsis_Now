@@ -1,14 +1,15 @@
 class Attractor {
   
-   constructor(x,y,m) {
-     this.pos = createVector(x,y);
+   constructor(x,y,m,p = p5.instance) {
+   this.p = p;
+     this.pos = p.createVector(x,y);
      this.mass = m;
-     this.r = sqrt(this.mass)*2;
+     this.r = p.sqrt(this.mass)*2;
    }
    
    attract(mover) {
      let force = p5.Vector.sub(this.pos, mover.pos);
-     let distanceSq = constrain(force.magSq(), 100, 600);
+     let distanceSq = this.p.constrain(force.magSq(), 100, 600);
      let G = 0.1;
      let strength = G * (this.mass * mover.mass) / distanceSq;
      force.setMag(strength);
@@ -17,8 +18,8 @@ class Attractor {
    
    
    show() {
-     noStroke();
-     fill(255,0, 100);
-     ellipse(this.pos.x, this.pos.y, this.r*2);    
+     this.p.noStroke();
+     this.p.fill(255,0, 100);
+     this.p.ellipse(this.pos.x, this.pos.y, this.r*2);    
    }
  }

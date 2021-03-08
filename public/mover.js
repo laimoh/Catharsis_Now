@@ -1,13 +1,13 @@
 class Mover {
-   constructor(x, y, m) {
+   constructor(x, y, m, p = p5.instance) {
+      this.p = p;
       this.w = 250;
       this.h = 50;
-      this.pos = createVector(x, y);
+      this.pos = p.createVector(x, y);
       this.speed = p5.Vector.random2D();
       this.speed.mult(2);
-      this.acc = createVector(0,0)
+      this.acc = p.createVector(0,0)
       this.mass = m
-      // this.w = sqrt(this.mass) * 2;
    }
  
    update() {
@@ -22,10 +22,10 @@ class Mover {
    }
 
    show(string, font) {
-      textSize(20);
-      textFont(font);
-      fill(134, 230, 129);
-      text(string, this.pos.x, this.pos.y, this.w, this.h); // x, y, (textbox) width, height
+      this.p.textSize(20);
+      this.p.textFont(font);
+      this.p.fill(134, 230, 129);
+     this.p.text(string, this.pos.x, this.pos.y, this.w, this.h); // x, y, (textbox) width, height
    }
 
    // edges() {
