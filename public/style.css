@@ -58,5 +58,7 @@ button {
   background-color: rgb(165, 17, 17);
   z-index: 2;
   position: absolute;
-  width: 5vw;
+  width: 8vw;
+  top: 52vh;
+  left: 46vw;
 }

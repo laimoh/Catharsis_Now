@@ -6,7 +6,6 @@ const handleStart = async () => {
    let keywordsJSON = await response.json()
    keys = Array.from(keywordsJSON.list)
    console.log(keys)
-   console.log(keywordsJSON)
    new p5(sketch);
 }
 
@@ -20,12 +19,11 @@ time.innerHTML = _time
 const sketch = p => {
    console.log('sketch start')
    let movers = [];
-   let attractor;
-   // let font1 = p.loadFont('assets/Messapia-Regular.otf');
+   let attractor,cnv;
    let font2 = p.loadFont('assets/DotGothic16-Regular.ttf');
  
    p.setup = function() {
-      let cnv = p.createCanvas(p.windowWidth, p.windowHeight)
+      cnv = p.createCanvas(p.windowWidth, p.windowHeight)
       cnv.position(0, 0)
       cnv.style('z-index', -1);
       
@@ -35,24 +33,20 @@ const sketch = p => {
          let m = p.random(50, 150);
          movers[i] = new Mover(x, y, m, p);
       }
-
       attractor = new Attractor(p.width / 2, p.height / 2, 100, p);
    };
 
-   p.mousePressed = function() {
-      for (let i = 0; i < movers.length; i++) {
-         movers[i].mouseOnText(p.mouseX, p.mouseY);
-      }
-   }
+   // anytime my mouse comes in contact with a specific mover, we want to stop the mover from moving
 
    p.draw = function() {
      p.background(120) 
     for (let i = 0; i < movers.length; i++) {
+      if (keys[i]) {
       movers[i].update();
       movers[i].show(keys[i], font2);
-      // movers[i].mouseOver(mouseOnText)
+      movers[i].mouseOnText(p.mouseX, p.mouseY)
       attractor.attract(movers[i]);
-      }
+    }}
    };
  };
 

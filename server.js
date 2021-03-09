@@ -36,8 +36,8 @@ const parseResults = (r) => {
    // limit posts to most recent - max 24 hours 
    console.log('Parsing data')
    const allPosts = []
-   // const oneHourEpoch = 3600
-   const thirtyMin = 1800
+   const oneHourEpoch = 3600
+   // const thirtyMin = 1800 
    responses.forEach(element => {
       allPosts.push(...element.data.children)
       
@@ -47,7 +47,7 @@ const parseResults = (r) => {
    allPosts.forEach(({data : {title, created_utc, author, ups, selftext}}) => {
       dataObj.push({ title: title, text: selftext, time: created_utc, who: author, voteCount: ups })
    })
-   const timeThresholdMin = (Math.floor(Date.now()/1000)) - fifteenMin;
+   const timeThresholdMin = (Math.floor(Date.now()/1000)) - oneHourEpoch;
 
    let currentPosts = []
 

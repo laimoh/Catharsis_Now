@@ -26,12 +26,32 @@ class Mover {
    mouseOnText(px, py) {
       const p = this.p
       let d = p.dist(px, py, this.pos.x, this.pos.y)
-      if (d < this.w && d < this.h) {
-         // .style.cursor = "pointer";
+      if (d < this.w / 3) {
+         p.cursor(p.CROSS);
          this.brightness = 255;
-         console.log('mouseOver')
+         let friction = this.speed.copy().normalize().mult(-1);
+         let mu = 0.1
+         let normal = this.mass;
+         friction.setMag(mu * normal);
+         this.applyForce(friction);
+      } else {
+         this.brightness = 134;
       }
    }
+
+   // slowDown() {//to caluculate the force applied to slow it down
+   //    // figure out direction of force
+   //    // normalise the vector
+   //    // put force in opposite direction
+   //    let friction = this.speed.copy();
+   //    friction.normalize()
+   //    friction.mult(-1);
+   //    // power of friction set through a made up value (mu)
+   //    let mu = 0.1
+   //    let normal = this.mass
+   //    friction.setMag(mu * normal)
+   //    this.applyForce(slowDown)
+   // }
 
    show(string, font) {
       const p = this.p
