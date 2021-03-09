@@ -5,6 +5,11 @@
   font-style: normal;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background-color: black;
   overflow: none;
@@ -21,10 +26,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: absolute;
+  /* top: 0; */
+  /* position: absolute; */
   width: 100vw;
   height: 100vh;
-  n
+  /* background-color: rgb(120, 120, 120); */
 }
 
 #logo {
@@ -46,4 +52,11 @@ body {
   color: rgb(134, 230, 129);
   font-family: "Messapia";
   font-size: 1rem;
+}
+
+button {
+  background-color: rgb(165, 17, 17);
+  z-index: 2;
+  position: absolute;
+  width: 5vw;
 }

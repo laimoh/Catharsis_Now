@@ -8,6 +8,7 @@ class Mover {
       this.speed.mult(2);
       this.acc = p.createVector(0,0)
       this.mass = m
+      this.brightness = 134;
    }
  
    update() {
@@ -16,16 +17,30 @@ class Mover {
      this.acc.set(0,0)
    }
 
+
    applyForce(force) {
       let f = p5.Vector.div(force, this.mass);
       this.acc.add(f);
    }
 
+   mouseOnText(px, py) {
+      const p = this.p
+      let d = p.dist(px, py, this.pos.x, this.pos.y)
+      if (d < this.w && d < this.h) {
+         // .style.cursor = "pointer";
+         this.brightness = 255;
+         console.log('mouseOver')
+      }
+   }
+
    show(string, font) {
-      this.p.textSize(20);
-      this.p.textFont(font);
-      this.p.fill(134, 230, 129);
-     this.p.text(string, this.pos.x, this.pos.y, this.w, this.h); // x, y, (textbox) width, height
+      const p = this.p
+      p.textSize(20);
+      p.textFont(font);
+      // p.fill(134, 230, 129);
+      p.fill(134, 230, 129, this.brightness)
+      p.rectMode(p.CENTER);
+      p.text(string, this.pos.x, this.pos.y, this.w, this.h); // x, y, (textbox) width, height
    }
 
    // edges() {
