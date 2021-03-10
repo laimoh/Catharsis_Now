@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 let app = express()
 app.use(express.static('public'))
 app.use(express.json())
-let port = 3000
+let port = 8000
 
 app.listen(port, () => {
    console.log(`Listening on port ${port}.`)
@@ -40,7 +40,6 @@ const parseResults = (r) => {
    // const thirtyMin = 1800 
    responses.forEach(element => {
       allPosts.push(...element.data.children)
-      
    })
 
    let dataObj = [];

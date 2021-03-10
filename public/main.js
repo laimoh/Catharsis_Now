@@ -1,13 +1,4 @@
-let generatedTexts = [];
-let keys;
-
-const handleStart = async () => {
-   let response = await fetch('/keyword')
-   let keywordsJSON = await response.json()
-   keys = Array.from(keywordsJSON.list)
-   console.log(keys)
-   new p5(sketch);
-}
+gsap.registerPlugin(TextPlugin);
 
 let dt = new Date();
 let h =  dt.getHours(), m = dt.getMinutes();
@@ -16,42 +7,84 @@ let _time = (h > 12) ? (h-12 + ':' + m +' PM') : (h + ':' + m +' AM');
 let time = document.querySelector('.time')
 time.innerHTML = _time
 
-const sketch = p => {
-   console.log('sketch start')
-   let movers = [];
-   let attractor,cnv;
-   let font2 = p.loadFont('assets/DotGothic16-Regular.ttf');
- 
-   p.setup = function() {
-      cnv = p.createCanvas(p.windowWidth, p.windowHeight)
-      cnv.position(0, 0)
-      cnv.style('z-index', -1);
-      
-      for (let i = 0; i < keys.length; i++) {
-         let x = p.random(p.width);
-         let y = p.random(p.height);
-         let m = p.random(50, 150);
-         movers[i] = new Mover(x, y, m, p);
-      }
-      attractor = new Attractor(p.width / 2, p.height / 2, 100, p);
-   };
-
-   // anytime my mouse comes in contact with a specific mover, we want to stop the mover from moving
-
-   p.draw = function() {
-     p.background(120) 
-    for (let i = 0; i < movers.length; i++) {
-      if (keys[i]) {
-      movers[i].update();
-      movers[i].show(keys[i], font2);
-      movers[i].mouseOnText(p.mouseX, p.mouseY)
-      attractor.attract(movers[i]);
-    }}
-   };
- };
-
-
 Noise3k({
    // container: '#defaultCanvas0', // (optional || default: document.body) specify where the noise is applied
    grainSize: 1, // (optional || default: 1) Multiplier for the grain size
  });
+
+let generatedTexts = [];
+let keys, btn, huh, el;
+
+setTimeout(() => {
+   document.querySelector(".loading").remove();
+   btn = document.createElement("button");
+   btn.innerHTML ="ENTER"
+   btn.classList.add("enter")
+   document.body.appendChild(btn); 
+   btn.addEventListener ("click", getData);
+}, 1000)
+
+
+
+const getData = async () => {
+      
+   let response = await fetch('/keyword')
+   let keywordsJSON = await response.json()
+   keys = Array.from(keywordsJSON.list)
+   // new p5(sketch);
+   btn.remove()
+   huh = document.createElement("button");
+   huh.classList.add("huh");
+   huh.innerHTML ="?"
+   document.body.appendChild(huh); 
+
+   displayResults(keys)
+}
+
+
+const displayResults = (array) => {
+   // key is an array of strings 
+   array.forEach((word) => {
+
+      if (!word) {
+         return
+      } else {
+      let x = randomNumber(0, window.innerWidth - 200)
+      let y = randomNumber(0, window.innerHeight - 100)
+      el = document.createElement("p");
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.margin = `1rem`;
+      el.classList.add("el");
+      el.innerHTML = word.toUpperCase();
+      document.body.appendChild(el);
+
+      let jumbledWord = jumbleWords(word)
+      animateLetters(word, jumbledWord, el)
+
+      }
+   })
+}
+
+let masterTl = gsap.timeline({repeat: -1})
+
+function animateLetters(word, jumbledWord, el) { 
+   // gsap.to(e, { text: j, duration: 2, delay: 1, stagger: 0.5 });
+   // gsap.to(e, { text: w, duration: 2, delay: 3, stagger: 0.5 });
+   let tl = gsap.timeline({repeat: 1, yoyo: true, repeatDelay: 1})
+   tl.to(el, { text: jumbledWord, duration: 0.8, delay: 0.5})
+   masterTl.add(tl)
+}
+
+function randomNumber(min, max) {  
+   return Math.floor(Math.random() * (max - min) + min); 
+} 
+
+function jumbleWords(word) { 
+   // maybe the jumbled words can be reflective in - words -> sdrow  to show the reflective nature of the text?
+   const letters = word.toUpperCase().split('');
+   let jumbled = letters.reverse().join('')
+   console.log(jumbled)
+   return jumbled
+}
+

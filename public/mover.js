@@ -27,7 +27,7 @@ class Mover {
       const p = this.p
       let d = p.dist(px, py, this.pos.x, this.pos.y)
       if (d < this.w / 3) {
-         p.cursor(p.CROSS);
+         p.cursor('grab');
          this.brightness = 255;
          let friction = this.speed.copy().normalize().mult(-1);
          let mu = 0.1

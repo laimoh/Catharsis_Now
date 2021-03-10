@@ -22,19 +22,18 @@ body {
 }
 
 .main-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* top: 0; */
-  /* position: absolute; */
+  position: absolute;
   width: 100vw;
   height: 100vh;
-  /* background-color: rgb(120, 120, 120); */
+  background-color: rgb(120, 120, 120);
 }
 
 #logo {
   width: 50vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-55%, -80%);
 }
 
 #logo img {
@@ -46,19 +45,106 @@ body {
   font-family: "Messapia";
   font-size: 2rem;
   color: rgb(165, 17, 17);
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, 90%);
 }
 
-.keyword {
-  color: rgb(134, 230, 129);
-  font-family: "Messapia";
-  font-size: 1rem;
+.loading {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  display: flex;
+}
+
+.a,
+.b,
+.c {
+  width: 15px;
+  height: 15px;
+  margin: 10px;
+  background-color: rgb(165, 17, 17);
+}
+
+.a {
+  animation: anim1 1s linear infinite;
+}
+
+.b {
+  animation: anim2 1s linear infinite;
+}
+
+.c {
+  animation: anim3 1s linear infinite;
+}
+
+@keyframes anim1 {
+  0%,
+  50%,
+  75%,
+  100% {
+    transform: scale(0.4);
+  }
+  25% {
+    transform: scale(0.8);
+  }
+}
+
+@keyframes anim2 {
+  0%,
+  25%,
+  75%,
+  100% {
+    transform: scale(0.4);
+  }
+  50% {
+    transform: scale(0.8);
+  }
+}
+
+@keyframes anim3 {
+  0%,
+  25%,
+  50%,
+  100% {
+    transform: scale(0.4);
+  }
+  75% {
+    transform: scale(0.8);
+  }
 }
 
 button {
-  background-color: rgb(165, 17, 17);
+  background-color: rgba(165, 17, 17, 0.735);
   z-index: 2;
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  outline: none;
+}
+
+.enter {
   width: 8vw;
-  top: 52vh;
-  left: 46vw;
+  color: rgb(120, 120, 120);
+}
+
+.huh {
+  font-family: "Messapia";
+  color: rgb(120, 120, 120);
+  width: 2.5vw;
+  height: 6vh;
+  font-size: 2rem;
+}
+
+.el {
+  color: rgb(134, 230, 129);
+  cursor: pointer;
+  font-family: "Messapia";
+  font-size: 1rem;
+  display: inline-block;
+  position: absolute;
+  /* padding: 2rem; */
 }
