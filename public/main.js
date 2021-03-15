@@ -24,18 +24,15 @@ setTimeout(() => {
    btn.addEventListener ("click", getData);
 }, 1000)
 
-
-
 const getData = async () => {
       
    let response = await fetch('/keyword')
    let keywordsJSON = await response.json()
    keys = Array.from(keywordsJSON.list)
-   // new p5(sketch);
    btn.remove()
    huh = document.createElement("button");
    huh.classList.add("huh");
-   huh.innerHTML ="?"
+   huh.innerHTML = "?"
    document.body.appendChild(huh); 
 
    displayResults(keys)
@@ -56,11 +53,11 @@ const displayResults = (array) => {
       el.style.top = `${y}px`;
       el.style.margin = `1rem`;
       el.classList.add("el");
-      el.innerHTML = word.toUpperCase();
+      el.innerHTML = word;
       document.body.appendChild(el);
 
       let jumbledWord = jumbleWords(word)
-      animateLetters(word, jumbledWord, el)
+      animateLetters(jumbledWord, el)
 
       }
    })
@@ -68,11 +65,12 @@ const displayResults = (array) => {
 
 let masterTl = gsap.timeline({repeat: -1})
 
-function animateLetters(word, jumbledWord, el) { 
+function animateLetters(jumbledWord, el) { 
    // gsap.to(e, { text: j, duration: 2, delay: 1, stagger: 0.5 });
    // gsap.to(e, { text: w, duration: 2, delay: 3, stagger: 0.5 });
-   let tl = gsap.timeline({repeat: 1, yoyo: true, repeatDelay: 1})
-   tl.to(el, { text: jumbledWord, duration: 0.8, delay: 0.5})
+   let tl = gsap.timeline({repeat: -1, yoyo: true, repeatDelay: 1})
+   tl.to(el, { text: jumbledWord, duration: 1, delay: 1})
+   tl.reverse()
    masterTl.add(tl)
 }
 
@@ -82,9 +80,7 @@ function randomNumber(min, max) {
 
 function jumbleWords(word) { 
    // maybe the jumbled words can be reflective in - words -> sdrow  to show the reflective nature of the text?
-   const letters = word.toUpperCase().split('');
-   let jumbled = letters.reverse().join('')
-   console.log(jumbled)
+   const jumbled = word.split("").reverse().join("");
    return jumbled
 }
 
