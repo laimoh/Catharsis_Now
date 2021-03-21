@@ -8,9 +8,13 @@ let time = document.querySelector('.time')
 time.innerHTML = _time
 
 Noise3k({
-   // container: '#defaultCanvas0', // (optional || default: document.body) specify where the noise is applied
-   grainSize: 1, // (optional || default: 1) Multiplier for the grain size
+   grainSize: 1, 
  });
+
+let object = {
+   key: word,
+   
+}
 
 let generatedTexts = [];
 let keys, btn, huh, el;

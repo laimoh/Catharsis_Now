@@ -12,9 +12,11 @@ app.listen(port, () => {
 
 const postPerRequest = 100;
 const maxPostsToFetch = 500;
-const maxRequests = maxPostsToFetch / postPerRequest // 5 total requests
+const maxRequests = maxPostsToFetch / postPerRequest
 const responses = [] // stores all of em
 let generatedTexts = [];
+// api-key
+// 89c7c00a-531f-4287-a4ab-dfa0ea915fab
 
 
 const fetchPosts = async (afterParam) => {
@@ -32,12 +34,11 @@ const fetchPosts = async (afterParam) => {
    parseResults(responses)
 }
 const parseResults = (r) => {
-   // grab time the post was made here
-   // limit posts to most recent - max 24 hours 
+
    console.log('Parsing data')
    const allPosts = []
    const oneHourEpoch = 3600
-   // const thirtyMin = 1800 
+
    responses.forEach(element => {
       allPosts.push(...element.data.children)
    })
