@@ -11,10 +11,6 @@ Noise3k({
    grainSize: 1, 
  });
 
-let object = {
-   key: word,
-   
-}
 
 let generatedTexts = [];
 let keys, btn, huh, el;

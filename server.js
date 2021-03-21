@@ -1,5 +1,6 @@
 const express = require('express')
 const fetch = require("node-fetch");
+const deepai = require('deepai');
 
 let app = express()
 app.use(express.static('public'))
@@ -15,8 +16,6 @@ const maxPostsToFetch = 500;
 const maxRequests = maxPostsToFetch / postPerRequest
 const responses = [] // stores all of em
 let generatedTexts = [];
-// api-key
-// 89c7c00a-531f-4287-a4ab-dfa0ea915fab
 
 
 const fetchPosts = async (afterParam) => {
@@ -33,6 +32,7 @@ const fetchPosts = async (afterParam) => {
    }
    parseResults(responses)
 }
+
 const parseResults = (r) => {
 
    console.log('Parsing data')
@@ -44,6 +44,7 @@ const parseResults = (r) => {
    })
 
    let dataObj = [];
+
    allPosts.forEach(({data : {title, created_utc, author, ups, selftext}}) => {
       dataObj.push({ title: title, text: selftext, time: created_utc, who: author, voteCount: ups })
    })
@@ -58,23 +59,13 @@ const parseResults = (r) => {
          return
       }
    }) 
-
    let texts = currentPosts.map((post) => {return post.text})
 
-   let textsSliced = texts.map(t => {return t.substring(0, 3000)})
    textAnalysis(texts)
-   // for (let i = 0; i < texts.length; i++) {
-   //    textGenerate(textsSliced[i])
-   // }
-   // texts.forEach(t => {
-   //    if (t.length > 3000) {
-   //       textsSliced.push()
-   //    }
-   // })
-   // console.log(textsSliced)
+}
 
-   // textsSliced.forEach(t => console.log(t.length))
-   
+const textSentiment = async () => {
+
 }
 
 const textAnalysis = async (texts) => {
@@ -111,6 +102,7 @@ const textAnalysis = async (texts) => {
    });
 }
 
+
 fetchPosts()
 
 // const textGenerate = async (text) => {
@@ -143,8 +135,7 @@ fetchPosts()
 //    const generateJSON = await generate.json()
 
 //    generatedTexts.push(generateJSON)
-
-//    displayResult(generatedTexts)
+//    console.log(generatedTexts)
 
 //   }
 
