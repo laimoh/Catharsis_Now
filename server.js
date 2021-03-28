@@ -1,11 +1,14 @@
-const express = require('express')
+const express = require('express');
+const request = require('request');
 const fetch = require("node-fetch");
-const deepai = require('deepai');
+var sentiment = require( 'wink-sentiment' );
+
+let texts;
 
 let app = express()
 app.use(express.static('public'))
 app.use(express.json())
-let port = 8000
+let port = 3000
 
 app.listen(port, () => {
    console.log(`Listening on port ${port}.`)
@@ -14,8 +17,9 @@ app.listen(port, () => {
 const postPerRequest = 100;
 const maxPostsToFetch = 500;
 const maxRequests = maxPostsToFetch / postPerRequest
-const responses = [] // stores all of em
-let generatedTexts = [];
+const responsesReddit = [] // stores all of em
+const responseKeywords = []
+
 
 
 const fetchPosts = async (afterParam) => {
@@ -24,13 +28,13 @@ const fetchPosts = async (afterParam) => {
       afterParam ? '&after=' + afterParam : ''
    }`)
    const responseJSON = await response.json();
-   responses.push(responseJSON);
+   responsesReddit.push(responseJSON);
 
-   if (responseJSON.data.after && responses.length < maxRequests) {
+   if (responseJSON.data.after && responsesReddit.length < maxRequests) {
       fetchPosts(responseJSON.data.after);
       return
    }
-   parseResults(responses)
+   parseResults(responsesReddit)
 }
 
 const parseResults = (r) => {
@@ -39,7 +43,7 @@ const parseResults = (r) => {
    const allPosts = []
    const oneHourEpoch = 3600
 
-   responses.forEach(element => {
+   responsesReddit.forEach(element => {
       allPosts.push(...element.data.children)
    })
 
@@ -59,84 +63,67 @@ const parseResults = (r) => {
          return
       }
    }) 
-   let texts = currentPosts.map((post) => {return post.text})
+   texts = currentPosts.map((post) => {return post.text})
+
+   for (let i = 0; i < texts.length; i++) {
+      sentimentAnalyze(texts[i])
+   }
 
    textAnalysis(texts)
 }
 
-const textSentiment = async () => {
+let analyzed = [];
 
+const sentimentAnalyze = async (texts) => {
+   
+   let object = sentiment(texts)
+   analyzed.push({
+      score: object.score,
+      averagedScore: object.normalizedScore
+   })
+   // console.log(analyzed);
 }
+
 
 const textAnalysis = async (texts) => {
-   
-   data = {
-      "data": texts
-   }
-   const optionsExtract = {
+
+let i = 0;
+let numOfRequests = texts.length
+
+while (i < numOfRequests) {
+   const options = {
       method: 'POST',
+      url: 'https://textanalysis-keyword-extraction-v1.p.rapidapi.com/keyword-extractor-text',
       headers: {
-         "Authorization": "Token 56189bb139c774de7dd866285c14ddd65a6e00cd",
-         "Content-Type": "application/json"
+        'content-type': 'application/x-www-form-urlencoded',
+        'x-rapidapi-key': '7252babc03mshb05a34ae2b8d83dp13f69cjsna192a80483b2',
+        'x-rapidapi-host': 'textanalysis-keyword-extraction-v1.p.rapidapi.com',
+        useQueryString: true
       },
-      body: JSON.stringify(data)
-   }
-   console.log('fetching extracted keywords')
-   const extract = await fetch('https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/', optionsExtract)
-   const extractJSON = await extract.json()
-
-   let keywords = extractJSON.map((eachPost) => {
-      let keywordSelect = Math.floor(Math.random() * (eachPost.extractions.length - 1 ))
-      if (eachPost.extractions[keywordSelect]) {
-         return eachPost.extractions[keywordSelect].parsed_value
+      form: {
+        text: texts[i],
+        wordnum: '5'
       }
-   }, [])
+    };
+    
+    request(options, function (error, response, body) {
+       if (error) throw new Error(error);
+       let parsed =  JSON.parse(body)
+       responseKeywords.push(parsed.keywords)
 
+    });
 
-   console.log(keywords)
-
-   app.get('/keyword', (request, response) => {
-      response.json({
-         list: keywords
-      })
-   });
+    i++
 }
+
+}
+
+app.get('/keyword', (request, response) => {
+   response.json({
+      list: responseKeywords,
+      scored: analyzed
+      })
+});
 
 
 fetchPosts()
-
-// const textGenerate = async (text) => {
-//   // have to limit the char to 3000  for evry text input
-
-//   if (text.length < 3000) {
-//      console.log('generating')
-//    let generateBody = {
-//       "prompt": {
-//            "text": text,
-//            "isContinuation": true,
-//       },
-//       "length": 1000,
-//       "streamResponse": false,
-//       "forceNoEnd": false,
-//       "topP": 0.8,
-//       "temperature": 1.1
-//    }
-
-//     const optionsGenerate = {
-//          method: 'POST',
-//          headers: {
-//             "Authorization": 'Bearer c7ad7297-9849-47fc-bddc-24da21c7c0fd',
-//             "Content-Type": "application/json"
-//          },
-//          body: JSON.stringify(generateBody)
-//    }
-
-//    const generate = await fetch('https://api.inferkit.com/v1/models/standard/generate', optionsGenerate)
-//    const generateJSON = await generate.json()
-
-//    generatedTexts.push(generateJSON)
-//    console.log(generatedTexts)
-
-//   }
-
-// }

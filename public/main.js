@@ -11,9 +11,9 @@ Noise3k({
    grainSize: 1, 
  });
 
-
-let generatedTexts = [];
-let keys, btn, huh, el;
+let currentTexts = [];
+let keys = [];
+let btn, huh, el;
 
 setTimeout(() => {
    document.querySelector(".loading").remove();
@@ -28,37 +28,72 @@ const getData = async () => {
       
    let response = await fetch('/keyword')
    let keywordsJSON = await response.json()
-   keys = Array.from(keywordsJSON.list)
+
+   console.log(keywordsJSON)
+
+   keywordsJSON.list.forEach((arr) => {
+      const getLongestStr = (longestStr, str) => {
+         return longestStr.length > str.length ? longestStr : str;
+       }
+       var longest = arr.reduce(getLongestStr, "")
+       keys.push(longest)
+   })
+
    btn.remove()
    huh = document.createElement("button");
    huh.classList.add("huh");
    huh.innerHTML = "?"
    document.body.appendChild(huh); 
 
-   displayResults(keys)
+   displayResults(keys) 
 }
 
 
 const displayResults = (array) => {
-   // key is an array of strings 
+   // key is an array of strings
+   let i = 0;
    array.forEach((word) => {
-
+      
       if (!word) {
          return
       } else {
-      let x = randomNumber(0, window.innerWidth - 200)
-      let y = randomNumber(0, window.innerHeight - 100)
-      el = document.createElement("p");
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
-      el.style.margin = `1rem`;
-      el.classList.add("el");
-      el.innerHTML = word;
-      document.body.appendChild(el);
+         var rows = 20;
+
+for(var i = 0; i < rows; i++)
+{
+  var row = document.createElement("div");
+  document.body.appendChild(row);
+}
+
+
+
+for(var i = 1; i <= rows; i++)
+{
+  var dir = i % 2; // 0, 1
+  dir = dir === 0 ? -1 : 1; // -1, 1
+  
+  var rowNumber = Math.floor(rows / 2);
+  rowNumber += dir * Math.floor(i / 2);
+  console.log(rowNumber);
+  
+  document.body.children[rowNumber].innerText = i;
+}
+
+      // let x = randomNumber(0, window.innerWidth - 200)
+      // let y = randomNumber(0, window.innerHeight - 100)
+      // el = document.createElement("p");
+      // el.style.left = `${x}px`;
+      // el.style.top = `${y}px`;
+      // el.style.margin = `1rem`;
+      // el.classList.add("el");
+      // el.setAttribute("index", i)
+      // el.innerHTML = word;
+      // document.body.appendChild(el);
 
       let jumbledWord = jumbleWords(word)
       animateLetters(jumbledWord, el)
-
+      i++
+      
       }
    })
 }
@@ -83,4 +118,6 @@ function jumbleWords(word) {
    const jumbled = word.split("").reverse().join("");
    return jumbled
 }
+
+
 
