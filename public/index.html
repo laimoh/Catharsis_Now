@@ -1,31 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/TextPlugin.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/TextPlugin.min.js"></script>
    <script src="lib/noise3k.min.js"></script>
-   <link href="style.css" rel="stylesheet" type="text/css"> 
-   <title>  Confessions  </title>
+   <link href="style.css" rel="stylesheet" type="text/css">
+   <title>Confessions</title>
 </head>
+
 <body>
-   <!-- <button onclick="handleStart()">ENTER</button> -->
-   <div id = "main-container" class="main-container">
+   <div id="main-container" class="main-container"></div>
+   <!-- animate -->
       <div id="logo">
          <img alt="logo" src="assets/logo.gif">
       </div>
+
+      <div class="loadingVideo">
+         <video autoplay muted loop id="myVideo">
+            <source src="assets/introLoader.mp4" type="video/mp4">
+         </video>
+      </div>
+
+      <!-- animate -->
       <div class="loading">
          <div class="a"></div>
          <div class="b"></div>
          <div class="c"></div>
       </div>
-      <div class="timeBox">
+      <!-- animate -->
+      <div class="timeBox"> 
          <p>{ <span class="time"></span> }</p>
       </div>
    </div>
- 
+
+   <div id="mainContainer2"></div>
+   <div class="openInfo">
+      <p>Catharsis Now’ is a webzine that reimagines the act of storytelling. Usernames have empowered the everyday
+         individual to become expressive and unhinged storytellers, sometimes even more than in face to face
+         interactions. To celebrate how technology has aided us in new types of writing, the zine grabs posts from the
+         subreddit ‘r/offMyChest’ and combines it with an AI writing tool to continue these monologues that talk about
+         guilt, anger and fear in order to alleviate the user’s emotions and share everyday experiences through posts
+         only made in the last 24 hours. A living data visualisation of the current cathartic emotions being felt.</p>
+   </div>
    <script src="main.js"></script>
-</body> 
+</body>
+
 </html>

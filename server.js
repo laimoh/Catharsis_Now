@@ -4,7 +4,6 @@ const fetch = require("node-fetch");
 var sentiment = require( 'wink-sentiment' );
 
 let texts;
-
 let app = express()
 app.use(express.static('public'))
 app.use(express.json())
@@ -68,8 +67,9 @@ const parseResults = (r) => {
    for (let i = 0; i < texts.length; i++) {
       sentimentAnalyze(texts[i])
    }
-
-   textAnalysis(texts)
+   for (let i = 0; i < texts.length; i++) {
+      textAnalysis(texts[i])
+   }
 }
 
 let analyzed = [];
@@ -81,16 +81,12 @@ const sentimentAnalyze = async (texts) => {
       score: object.score,
       averagedScore: object.normalizedScore
    })
-   // console.log(analyzed);
 }
 
 
-const textAnalysis = async (texts) => {
+const textAnalysis = async (text) => {
+   console.log('anlaysing data')
 
-let i = 0;
-let numOfRequests = texts.length
-
-while (i < numOfRequests) {
    const options = {
       method: 'POST',
       url: 'https://textanalysis-keyword-extraction-v1.p.rapidapi.com/keyword-extractor-text',
@@ -101,7 +97,7 @@ while (i < numOfRequests) {
         useQueryString: true
       },
       form: {
-        text: texts[i],
+        text: text,
         wordnum: '5'
       }
     };
@@ -110,19 +106,17 @@ while (i < numOfRequests) {
        if (error) throw new Error(error);
        let parsed =  JSON.parse(body)
        responseKeywords.push(parsed.keywords)
-
+       console.log(responseKeywords)
     });
-
-    i++
-}
-
+ 
 }
 
 app.get('/keyword', (request, response) => {
    response.json({
       list: responseKeywords,
-      scored: analyzed
-      })
+      scored: analyzed,
+      textsArr: texts
+   })
 });
 
 
