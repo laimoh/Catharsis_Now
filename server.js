@@ -28,6 +28,7 @@ const fetchPosts = async (afterParam) => {
    const response = await fetch(`https://www.reddit.com/r/offmychest.json?limit=${postPerRequest}${
       afterParam ? '&after=' + afterParam : ''
    }`)
+   // console.log(response)
    const responseJSON = await response.json();
    responsesReddit.push(responseJSON);
 

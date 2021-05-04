@@ -20,25 +20,25 @@ let btn, huh, el, scoreList;
    gsap.from('#logo', { 
       opacity: 0, 
       duration: 1,
-      delay: 9, 
+      delay: 4, 
       ease:"power2.in"
    })
    gsap.from('.openInfo', { 
       opacity: 0, 
       duration: 1,
-      delay: 9.4,
+      delay: 4,
       ease:"easeIn"
    })
    gsap.from('.timeBox', { 
       opacity: 0, 
       duration: 1,
-      delay: 9,  
+      delay: 4,  
       ease:"power2.in"
    })
    gsap.from('.loading', { 
       opacity: 0, 
       duration: 1,
-      delay: 9.4,  
+      delay: 4,  
       ease:"power2.in"
    })
 
@@ -50,7 +50,7 @@ setTimeout(() => { // turn this into a normal function that activtes once the  i
    btn.classList.add("enter")
    document.body.appendChild(btn);
    btn.addEventListener("click", getData);
-}, 2000)
+}, 4000)
 
 const getData = async () => {
 // make a call to server to fetch all data
@@ -59,37 +59,49 @@ const getData = async () => {
    dataset = dataJSON.list
    let info = document.querySelector('.openInfo')
    info.classList.add('close')
-   // console.log(data)
-   // let textArr = keywordsJSON.textsArr
-   // console.log(textsArr)
-   // scoreList = keywordsJSON.scored
-   // keywordsJSON.list.forEach((arr) => {
-   //    const getLongestStr = (longestStr, str) => {
-   //       return longestStr.length > str.length ? longestStr : str;
-   //    }
-   //    var longest = arr.reduce(getLongestStr, "")
-   //    keys.push(longest)
-   // })
+
    let bgVid = document.querySelector('.loadingVideo video') 
    bgVid.classList.remove('stillLoading');
    bgVid.classList.add('loaded');
    bgVid.src = "assets/shortLoader.mp4"
    
    btn.remove()
-   huh = document.createElement("button");
-   huh.classList.add("huh");
-   huh.innerHTML = "?"
+   huh = document.createElement("p");
+   huh.classList.add("subtitle");
+   huh.innerHTML = "Positive Scores"
    document.body.appendChild(huh);
-   huh.addEventListener("click", toggleInfo);
 
-
-   
    timeSet(dataset, sliderValue)
 
    gsap.from('#mainContainer2', { 
       opacity: 0, 
       duration: 0.8,
       ease:"power2.in"
+   })
+   gsap.to('#logo', { 
+      scale: 0.4,
+      y: -150,
+      x: 1,
+      duration: 1,
+      ease:"ease"
+   })
+   gsap.to('.timeBox', { 
+      x: -550,
+      y: -380,
+      scale: 0.6,
+      duration: 1,
+      ease:"ease"
+   })
+
+   gsap.to('.navData', { 
+      opacity: 1, 
+      duration: 1,
+      ease:"ease"
+   })
+   gsap.to('.sliderContainer', { 
+      opacity: 1, 
+      duration: 1,
+      ease:"ease"
    })
 }
 
@@ -115,9 +127,9 @@ function toggleInfo() {
 
 
 // make a funciton to create an array of objects with the required time threshold
-
+let currentTimedObjs;
 const timeSet = (arrayOfObjects, sliderValueCurrent) => {
-   let currentTimedObjs = [] // list of objects that have been
+   currentTimedObjs = [] // list of objects that have been
 
    const timeThresholdMin = (Math.floor(Date.now()/1000)) - sliderValueCurrent;
    arrayOfObjects.forEach((obj) => {
@@ -133,28 +145,61 @@ const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2
 
 const getMinMaxScore = (arr) => {
    let values = arr.map(a => a.averagedScore);
-   s =  Math.min(...values)
-   l = Math.max(...values) 
+   let s =  Math.min(...values)
+   let l = Math.max(...values) 
 
    return [s, l];
+}
+
+const getMinMaxTime = (arr) => {
+   let values = arr.map(a => a.time);
+   let s =  Math.min(...values)
+   let l = Math.max(...values) 
+
+   return [s, l];
+}
+
+function removeAllChildNodes(parent) {
+   while (parent.firstChild) {
+       parent.removeChild(parent.firstChild);
+   }
+}
+
+
+let sliderInput = 5400
+
+let slider = document.querySelector('#slider')
+slider.addEventListener('input', sliderChange)
+
+function sliderChange() {
+   sliderInput = slider.value
+   console.log(sliderInput)
+   const container = document.querySelector('#mainContainer2');
+   removeAllChildNodes(container);
+   displayResults(currentTimedObjs)
 }
 
 const displayResults = (arrayOfObjects) => {
   
    console.log(arrayOfObjects)
    let scores = getMinMaxScore(arrayOfObjects)
-   // if object.averaged score is *high* place it closer to 0 on y axis while *lower* will be placed at window.height
+   let times = getMinMaxTime(arrayOfObjects)
+
    arrayOfObjects.forEach((obj) => {
       // create a div for every object
       let row = document.createElement("div")
       row.classList.add('text')
       row.innerHTML = obj.title
-      
-      console.log(smallScore,largeScore)
 
-      // place each div mapped to the y axis
-      let sentimentY = Math.floor(map(obj.averagedScore, scores[1], scores[0], 0, 700))
-      row.style.top = `${sentimentY}px`;
+      // place each div mapped to the X axis - left will have larger score
+      let sentimentX = Math.floor(map(obj.averagedScore, scores[1], scores[0], 0, window.innerWidth - 100))
+      row.style.marginLeft = `${sentimentX}px`;
+
+
+      // place each div mapped to the Y axis - 0 is older post, 1 new is newest post
+      let timeY = Math.floor(map(obj.time, times[1], times[0], 0, 8000))
+      row.style.marginTop = `${timeY}px`;
+
       document.getElementById("mainContainer2").appendChild(row);
    })
    
