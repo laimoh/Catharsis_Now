@@ -19,7 +19,7 @@
 
 body {
   background-color: black;
-  overflow: none;
+  /* overflow: none; */
 }
 
 .title {
@@ -41,7 +41,7 @@ body {
    height: 100vh;
    top: 0;
    left: 0;
-   overflow: hidden;
+   /* overflow: hidden; */
  }
 
 #logo {
@@ -68,12 +68,22 @@ body {
   transform: translate(-50%, 90%);
 }
 
-#myVideo {
-   position: fixed;
+.loadingVideo {
+  position: fixed;
   right: 0;
   bottom: 0;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100vw;
+  height: 100vh;
+}
+
+.stillLoading {
+   width: 100%;
+   height: 100%;
+}
+
+.loaded {
+   width: 100%;
+   height: auto;
 }
 
 .loading {
@@ -166,13 +176,13 @@ button {
   transform: translate(-50%, -50%);
   color: rgb(120, 120, 120);
   width: 2.5vw;
-  height: 6vh;
+  height: 8vh;
   font-size: 2rem;
 }
 
 
 .el {
-   width: 20vw;
+   width: 25vw;
    cursor: pointer;
   font-family: "Messapia";
   font-size: 1.2rem;
@@ -214,3 +224,36 @@ button {
    color: rgb(134, 230, 129,0.735);
    line-height: 1.7;
 }
+
+.slider{
+   width: 100%;
+   height: 25px; /* Specified height */
+   background: #d3d3d3; /* Grey background */
+   outline: none; /* Remove outline */
+   opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+   -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+   transition: opacity .2s;
+}
+
+.sliderContainer {
+   position: absolute;
+   top: 47vh;
+   left: -20vw;
+   width: 50%;
+   transform: rotate(90deg);
+   z-index: 2;
+}
+
+ input[type=range]::-webkit-slider-thumb {
+   -webkit-appearance: none; /* Override default look */
+   appearance: none;
+   width: 25px; /* Set a specific slider handle width */
+   height: 25px; /* Slider handle height */
+   background: #04AA6D; /* Green background */
+   cursor: pointer; /* Cursor on hover */
+ }
+
+ .text {
+    position: absolute;
+    color: black;
+ }
