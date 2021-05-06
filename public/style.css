@@ -31,12 +31,9 @@ body {
 }
 
 #mainContainer2 {
-   position: absolute;
+   position: relative;
    width: 100vw;
-   height: 100vh;
-   top: 0;
-   left: 0;
-   /* overflow: hidden; */
+   pointer-events: none;
  }
 
 #logo {
@@ -46,7 +43,7 @@ body {
   left: 49%;
   transform: translate(-55%, -50%);
   z-index: 1;
-
+   pointer-events: none;
 }
 
 #logo img {
@@ -62,6 +59,7 @@ body {
   top:55%;
   left: 50%;
   transform: translate(-50%, 90%);
+  pointer-events: none;
 }
 
 .loadingVideo {
@@ -74,7 +72,8 @@ body {
 
 .stillLoading {
    width: 100%;
-   height: 100%;
+   height: 100vh;
+   overflow: none;
 }
 
 .loaded {
@@ -89,7 +88,6 @@ body {
    left: 50%;
    transform: translate(-50%, -50%);
 }
-
 
 .a,
 .b,
@@ -175,17 +173,6 @@ button {
 }
 
 
-/* .el {
-   width: 25vw;
-   cursor: pointer;
-  font-family: "Messapia";
-  font-size: 1.2rem;
-   color: rgb(134, 230, 129);
-   display: flex;
-   align-items: center;
-   text-shadow: 2px 2px #ff000095;
-} */
-
 .openInfo {
    width: 40vw;
    height: 45vh;
@@ -223,6 +210,8 @@ button {
    width: 100vw;
    height: 100vh;
    opacity: 0;
+   display: none;
+   pointer-events: none;
 }
 
 .Xaxis {
@@ -234,6 +223,8 @@ button {
    display: flex;
    margin: auto;
    justify-content: space-between;
+   pointer-events: none;
+   
 }
 
 .Xaxis p {
@@ -250,9 +241,23 @@ button {
    display: flex;
    flex-direction: column;
    justify-content: space-between;
+   pointer-events: none;
 }
 
 .Yaxis p {
+   color: rgb(134, 230, 129,0.735);
+   font-family: "DotGothic";
+}
+
+.label {
+   position: fixed;
+   top: 89vh;
+   left: 65vw;
+   width: 30%;
+   opacity: 0;
+   z-index: 2;
+   display: flex;
+   justify-content: space-between;
    color: rgb(134, 230, 129,0.735);
    font-family: "DotGothic";
 }
@@ -272,12 +277,23 @@ button {
     width: 10vw;
     font-size: 1rem;
     font-family: 'Hershey';
+    pointer-events: all;
  }
 
  .text:hover {
     cursor: pointer;
+    color: white;
+    z-index: 2;
+ }
+
+ .textbox {
+    display: inline-block;
+    font-size: 1.5rem;
+    padding: 2rem 1.8rem;
+    max-width: 36vw;
+   background-color: rgba(0, 0, 0, 1);
    color: white;
-   z-index: 2;
+   font-family: 'Hershey';
  }
 
  input[type=range] {

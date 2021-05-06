@@ -3,7 +3,7 @@ gsap.registerPlugin(TextPlugin); // type animation library
 // current time
 let _time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: "2-digit" })
 let dataset; //object with all 500 posts
-let sliderValue = 86400; // 1 day old posts is the default
+let sliderValue = 604800; // 1 week old posts is the default
 let time = document.querySelector('.time')
 time.innerHTML = _time
 
@@ -64,14 +64,11 @@ const getData = async () => {
    bgVid.classList.remove('stillLoading');
    bgVid.classList.add('loaded');
    bgVid.src = "assets/shortLoader.mp4"
-   
+   document.querySelector('.main-container').remove()
+   document.querySelector('.navData').style.display = 'block'
    btn.remove()
-   huh = document.createElement("p");
-   huh.classList.add("subtitle");
-   huh.innerHTML = "Positive Scores"
-   document.body.appendChild(huh);
 
-   timeSet(dataset, sliderValue)
+   timeSet(dataset, 604800)
 
    gsap.from('#mainContainer2', { 
       opacity: 0, 
@@ -103,12 +100,14 @@ const getData = async () => {
       duration: 1,
       ease:"ease"
    })
+   gsap.to('.label', { 
+      opacity: 1, 
+      duration: 1,
+      ease:"ease"
+   })
 }
 
-function toggleInfo() {
-   let info = document.querySelector('.openInfo')
-   info.classList.toggle('close')
-}
+
 
 
 
@@ -128,12 +127,22 @@ function toggleInfo() {
 
 // make a funciton to create an array of objects with the required time threshold
 let currentTimedObjs;
-const timeSet = (arrayOfObjects, sliderValueCurrent) => {
-   currentTimedObjs = [] // list of objects that have been
 
-   const timeThresholdMin = (Math.floor(Date.now()/1000)) - sliderValueCurrent;
+let slider = document.querySelector('#slider')
+slider.addEventListener('mouseup', sliderChange)
+
+function sliderChange() {
+   sliderValue = slider.value
+   const container = document.querySelector('#mainContainer2');
+   removeAllChildNodes(container);
+   timeSet(dataset, sliderValue)
+}
+
+const timeSet = (arrayOfObjects, sliderValueCurrent) => {
+   currentTimedObjs = [] // list of objects that have been conditionally checked
+   let timeThresholdMin = (Math.floor(Date.now()/1000)) - sliderValueCurrent;
    arrayOfObjects.forEach((obj) => {
-      if (obj.time <= timeThresholdMin) {
+      if (obj.time >= timeThresholdMin) {
          currentTimedObjs.push(obj)
       }
    });
@@ -142,6 +151,7 @@ const timeSet = (arrayOfObjects, sliderValueCurrent) => {
 }
 
 const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
+
 
 const getMinMaxScore = (arr) => {
    let values = arr.map(a => a.averagedScore);
@@ -159,61 +169,76 @@ const getMinMaxTime = (arr) => {
    return [s, l];
 }
 
-function removeAllChildNodes(parent) {
-   while (parent.firstChild) {
-       parent.removeChild(parent.firstChild);
-   }
+function easeInOutCubic(t) {
+   return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1
 }
 
+function getEasedValues(arr) {
+   let values = arr.map(a => a.easedX);
+   let min =  Math.min(...values)
+   let max = Math.max(...values) 
 
-let sliderInput = 5400
-
-let slider = document.querySelector('#slider')
-slider.addEventListener('input', sliderChange)
-
-function sliderChange() {
-   sliderInput = slider.value
-   console.log(sliderInput)
-   const container = document.querySelector('#mainContainer2');
-   removeAllChildNodes(container);
-   displayResults(currentTimedObjs)
+   return [min, max]
 }
 
 const displayResults = (arrayOfObjects) => {
-  
-   console.log(arrayOfObjects)
-   let scores = getMinMaxScore(arrayOfObjects)
-   let times = getMinMaxTime(arrayOfObjects)
+
+   let container;
+   let scores = getMinMaxScore(arrayOfObjects) // min and max sentiment scores for map function
 
    arrayOfObjects.forEach((obj) => {
       // create a div for every object
+      // place each div mapped to the X axis - left will have larger score
+      let x = map(obj.averagedScore, scores[0], scores[1], 0, 1)
+      // create a new key of eased X value for each object in the array
+      obj.easedX = 1 - (easeInOutCubic(x));
+   })
+
+   let easedVal = getEasedValues(arrayOfObjects)
+   let times = getMinMaxTime(arrayOfObjects) // min and max time post is made for map function
+   
+   arrayOfObjects.forEach((obj) => {
+      container = document.getElementById("mainContainer2");
       let row = document.createElement("div")
       row.classList.add('text')
       row.innerHTML = obj.title
+      row.setAttribute('fullText', obj.text)
 
-      // place each div mapped to the X axis - left will have larger score
-      let sentimentX = Math.floor(map(obj.averagedScore, scores[1], scores[0], 0, window.innerWidth - 100))
+      let sentimentX = (map(obj.easedX, easedVal[0], easedVal[1], 100, window.innerWidth-200))
       row.style.marginLeft = `${sentimentX}px`;
-
-
+      console.log(easedVal) 
       // place each div mapped to the Y axis - 0 is older post, 1 new is newest post
-      let timeY = Math.floor(map(obj.time, times[1], times[0], 0, 8000))
+      let timeY = Math.floor(map(obj.time, times[1], times[0], 100, 4000))
       row.style.marginTop = `${timeY}px`;
 
-      document.getElementById("mainContainer2").appendChild(row);
+      container.appendChild(row);
    })
-   
 
-   // var rows = arrayOfObjects.length 
-   // let Hrow = window.innerHeight / rows
-   
   
-   // for (var i = 0; i < rows; i++) {
-
-   //    let leftRow, color;
-   //    let current = obj[i]
-   //    row = document.createElement("div")
-   //    row.classList.add('el')
+   document.querySelectorAll('.text').forEach(t => {
+      t.addEventListener('click', (event) => {
+         // if maincontainer 2 conatins a class
+         if (container.querySelector(".textbox")) {
+            document.querySelectorAll('.textbox').forEach(e => e.remove());
+         }
+         let selectedText = event.target.getAttribute('fulltext');
+         let fullTextBox = document.createElement("div");
+         fullTextBox.classList.add('textbox');
+        
+         fullTextBox.style.marginLeft =  `${event.pageX}px`;
+         fullTextBox.style.marginTop =  `${event.pageY}px`;
+         fullTextBox.innerHTML = selectedText;
+         container.appendChild(fullTextBox);
+   })
+  
+     
+   })
+   document.querySelector('.loaded').addEventListener('click', () => {
+   
+      if (container.querySelector(".textbox")) {
+         document.querySelectorAll('.textbox').forEach(e => e.remove());
+      }
+   })
 
    //    if (current.averagedScore < 0) {
    //       leftRow = Math.floor(map(current.averagedScore, smallScore, largeScore, 80, 500))
@@ -242,6 +267,12 @@ const displayResults = (arrayOfObjects) => {
    //    document.getElementById("mainContainer2").children[rowNumber].innerText = array[rowNumber];
      
    // }
+}
+
+function removeAllChildNodes(parent) {
+   while (parent.firstChild) {
+       parent.removeChild(parent.firstChild);
+   }
 }
 
 let masterTl = gsap.timeline({
