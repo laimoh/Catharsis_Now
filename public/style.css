@@ -286,6 +286,20 @@ button {
     z-index: 2;
  }
 
+ .clickable {
+    cursor: pointer;
+ }
+
+ .text-container {
+    width: 100vw;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    /* display: inline-block; */
+ }
+
  .textbox {
     display: inline-block;
     font-size: 1.5rem;
@@ -294,6 +308,7 @@ button {
    background-color: rgba(0, 0, 0, 1);
    color: white;
    font-family: 'Hershey';
+   pointer-events: all;
  }
 
  input[type=range] {

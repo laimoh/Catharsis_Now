@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 const fetch = require("node-fetch");
+var keyword_extractor = require("keyword-extractor");
 var sentiment = require('wink-sentiment');
 const {} = require('wink-sentiment/src/afinn-en-165');
 
@@ -17,7 +18,7 @@ const postPerRequest = 100;
 const maxPostsToFetch = 500;
 const maxRequests = maxPostsToFetch / postPerRequest
 const responsesReddit = [] // stores all of em
-const responseKeywords = []
+
 
 
 
@@ -71,17 +72,57 @@ const parseResults = (r) => {
 
    }
 
+   for (let i = 0; i < dataObj.length; i++) {
+      let current = dataObj[i] // object in dataObj array
+      if (current.text) {
+         extractKeys(current)
+      }
+
+   }
+
 }
+
+const extractKeys = async (obj) => {
+   let sentence = obj.title.concat(". ", obj.text)
+   const extraction_result = keyword_extractor.extract(sentence, {
+      language:"english",
+      remove_digits: true,
+      return_changed_case:true,
+      remove_duplicates: false
+   });
+   let counts = {}
+   // extraction_result is an array of key words
+   for (let i = 0; i < extraction_result.length; i++) {
+      let word = extraction_result[i]
+      if (counts[word] === undefined) {
+         counts[word] = 1;
+      } else {
+         counts[word] = counts[word] + 1
+      }
+   }
+   var sortable = [];
+   for (let word in counts) {
+    sortable.push([word, counts[word]]);
+   }
+
+   sortable.sort(function(a, b) {
+       return b[1] - a[1];
+   });
+   sortable.splice(10)
+   let keys = sortable.map(item => item[0])
+   obj.keywords = keys;
+}
+
 
 let sentArr = []
 const sentimentAnalyze = async (obj) => {
-
-   let object = sentiment(obj.text)
-
+   let sentence = obj.title.concat(". ", obj.text)
+   let object = sentiment(sentence)
+   // push as a key value pair into existing object (dataObj)
    obj.score = object.score;
    obj.averagedScore = object.normalizedScore
 
-} // push as a key value pair into existing object (dataObj)
+} 
 
 
 app.get('/keyword', (request, response) => {
