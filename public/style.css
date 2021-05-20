@@ -286,6 +286,11 @@ button {
     z-index: 2;
  }
 
+ .highlight {
+    color: #d42020;
+ }
+
+
  .clickable {
     cursor: pointer;
  }
@@ -306,7 +311,7 @@ button {
     padding: 2rem 1.8rem;
     max-width: 36vw;
    background-color: rgba(0, 0, 0, 1);
-   color: white;
+   color: rgb(208, 208, 208);
    font-family: 'Hershey';
    pointer-events: all;
  }

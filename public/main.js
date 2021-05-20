@@ -22,19 +22,19 @@ let btn, huh, el, scoreList;
    gsap.from('#logo', { 
       opacity: 0, 
       duration: 1,
-      delay: 4, 
+      delay: 1, 
       ease:"power2.in"
    })
    gsap.from('.openInfo', { 
       opacity: 0, 
       duration: 1,
-      delay: 4,
+      delay: 2.5,
       ease:"easeIn"
    })
    gsap.from('.timeBox', { 
       opacity: 0, 
       duration: 1,
-      delay: 4,  
+      delay: 2.5,  
       ease:"power2.in"
    })
    gsap.from('.loading', { 
@@ -52,7 +52,7 @@ setTimeout(() => { // turn this into a normal function that activtes once the  i
    btn.classList.add("enter")
    document.body.appendChild(btn);
    btn.addEventListener("click", getData);
-}, 4000)
+}, 7000)
 
 const getData = async () => {
 // make a call to server to fetch all data
@@ -61,9 +61,7 @@ const getData = async () => {
    dataset = dataJSON.list
    let info = document.querySelector('.openInfo')
    info.classList.add('close')
-   
-   console.log(dataset)
-
+console.log(dataset)
    let bgVid = document.querySelector('.loadingVideo video') 
    bgVid.classList.remove('stillLoading');
    bgVid.classList.add('loaded');
@@ -76,7 +74,7 @@ const getData = async () => {
 
    gsap.from('#mainContainer2', { 
       opacity: 0, 
-      duration: 0.8,
+      duration: 1,
       ease:"power2.in"
    })
    gsap.to('#logo', { 
@@ -151,8 +149,8 @@ const getMinMaxTime = (arr) => {
    return [s, l];
 }
 
-function easeInOutQuint(t) {
-   return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1
+function easeInOutQuint(x) {
+   return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 }
 
 function getEasedValues(arr) {
@@ -173,10 +171,11 @@ const displayResults = (arrayOfObjects) => {
       // place each div mapped to the X axis - left will have larger score
       let x = map(obj.averagedScore, scores[0], scores[1], 0, 1)
       // create a new key of eased X value for each object in the array
-      obj.easedX = 1 - (easeInOutQuint(x));
+      obj.easedX =  1 - (easeInOutQuint(x));
+      // console.log(obj.easedX)
    })
 
-   let easedVal = getEasedValues(arrayOfObjects)
+   // let easedVal = getEasedValues(arrayOfObjects)
    let times = getMinMaxTime(arrayOfObjects) // min and max time post is made for map function
    
    arrayOfObjects.forEach((obj) => {
@@ -185,7 +184,9 @@ const displayResults = (arrayOfObjects) => {
       row.innerHTML = obj.title
       row.setAttribute('fullText', obj.text)
       row.setAttribute('keywords', obj.keywords)
-      let sentimentX = (map(obj.easedX, easedVal[0], easedVal[1], 100, window.innerWidth-200))
+      
+      let sentimentX = map(obj.easedX, 0, 1, 100, window.innerWidth - 200)
+
       row.style.marginLeft = `${sentimentX}px`;
 
       // place each div mapped to the Y axis - 0 is older post, 1 new is newest post
@@ -226,8 +227,7 @@ function findKeywords(keys, div) {
   
   div.html(text)
   gsap.to('.clickable', { 
-   opacity:0.7,
-   color: '#a51111',
+   color: '#d42020',
    duration: 0.8,
    ease:"ease"
    })
@@ -240,7 +240,16 @@ function findKeywords(keys, div) {
 }
 
 function findSimilar(word) {
-   // $(".text")
+   document.querySelectorAll('.text').forEach((t) => {
+      t.classList.remove('highlight')
+      let txt = t.getAttribute('fullText')
+      if (txt.includes(word)) {
+         // t.style.color = `#d42020`
+         t.classList.add('highlight')
+      } else {
+         return
+      }
+   })
 }
 
 // document.querySelector('.loaded').addEventListener('click', () => {

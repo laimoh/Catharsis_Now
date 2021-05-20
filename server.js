@@ -4,6 +4,11 @@ const fetch = require("node-fetch");
 var keyword_extractor = require("keyword-extractor");
 var sentiment = require('wink-sentiment');
 const {} = require('wink-sentiment/src/afinn-en-165');
+const fs = require('fs');
+
+let stopdata = fs.readFileSync('stop.json');
+let stop = JSON.parse(stopdata);
+
 
 let app = express()
 app.use(express.static('public'))
@@ -82,6 +87,13 @@ const parseResults = (r) => {
 
 }
 
+// var obj = require('stopWords.json');
+
+// console.log(obj); 
+
+// import stop from ('./stopWords.json')
+// console.log(stop)
+
 const extractKeys = async (obj) => {
    let sentence = obj.title.concat(". ", obj.text)
    const extraction_result = keyword_extractor.extract(sentence, {
@@ -91,15 +103,23 @@ const extractKeys = async (obj) => {
       remove_duplicates: false
    });
    let counts = {}
-   // extraction_result is an array of key words
+   
    for (let i = 0; i < extraction_result.length; i++) {
       let word = extraction_result[i]
-      if (counts[word] === undefined) {
-         counts[word] = 1;
+      if (!stop.includes(word)) {
+         console.log('STOP WORD ADDED: ' + word)
+         if (counts[word] === undefined) {
+            counts[word] = 1;
+         } else {
+            counts[word] = counts[word] + 1
+         }
       } else {
-         counts[word] = counts[word] + 1
+         console.log('STOP WORD NOT ADDED: ' + word)
       }
-   }
+}
+      
+  // extraction_result is an array of key words
+  
    var sortable = [];
    for (let word in counts) {
     sortable.push([word, counts[word]]);
@@ -108,10 +128,14 @@ const extractKeys = async (obj) => {
    sortable.sort(function(a, b) {
        return b[1] - a[1];
    });
+   
    sortable.splice(10)
    let keys = sortable.map(item => item[0])
+   
    obj.keywords = keys;
 }
+
+
 
 
 let sentArr = []
