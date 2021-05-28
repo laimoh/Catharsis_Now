@@ -108,14 +108,14 @@ const extractKeys = async (obj) => {
    for (let i = 0; i < extraction_result.length; i++) {
       let word = extraction_result[i]
       if (!stop.includes(word)) {
-         console.log('STOP WORD ADDED: ' + word)
+       
          if (counts[word] === undefined) {
             counts[word] = 1;
          } else {
             counts[word] = counts[word] + 1
          }
       } else {
-         console.log('STOP WORD NOT ADDED: ' + word)
+        
       }
 }
       
